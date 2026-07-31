@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="The list">
+<meta name="theme-color" content="#14171c">
+<title>The list</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#14171c; --card:#1b1f26; --raise:#232830;
+    --paper:#eceae5; --dim:#8b9199; --rule:#2b313a; --mark:#c2a35c;
+    --serif:'Newsreader',Georgia,serif;
+    --sans:'Inter',-apple-system,system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html{background:var(--ink)}
+  body{
+    background:var(--ink);color:var(--paper);font-family:var(--sans);
+    -webkit-font-smoothing:antialiased;
+    padding:calc(env(safe-area-inset-top) + 26px) 18px calc(env(safe-area-inset-bottom) + 60px);
+    max-width:540px;margin:0 auto;
+  }
+  .eyebrow{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);margin-bottom:12px}
+  h1{font-family:var(--serif);font-weight:400;font-size:34px;line-height:1.1;letter-spacing:-.01em;margin-bottom:8px}
+  .sub{font-family:var(--serif);font-style:italic;font-size:16px;line-height:1.45;color:var(--dim)}
+
+  section{margin-top:26px;background:var(--card);border:1px solid var(--rule);border-radius:14px;padding:22px 20px}
+  h2{font-size:10px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--mark);
+     padding-bottom:9px;border-bottom:1px solid var(--rule);margin-bottom:16px}
+
+  ul{list-style:none}
+  li{font-size:15px;line-height:1.45;padding-left:18px;position:relative;margin-bottom:11px}
+  li:last-child{margin-bottom:0}
+  li::before{content:"";position:absolute;left:0;top:9px;width:6px;height:1px;background:var(--mark)}
+
+  .say{font-family:var(--serif);font-size:17px;line-height:1.5;padding:15px 16px;background:var(--raise);
+       border-left:2px solid var(--mark);border-radius:0 6px 6px 0}
+  p.note{font-size:14px;line-height:1.55;color:var(--dim)}
+  .prompt{font-family:var(--serif);font-size:17px;line-height:1.45;margin-bottom:6px}
+
+  button{font-family:var(--sans);font-size:15px;font-weight:500;color:var(--ink);background:var(--mark);
+         border:0;border-radius:10px;padding:15px 18px;width:100%;cursor:pointer}
+  button:active{opacity:.75}
+  button.ghost{background:transparent;color:var(--dim);border:1px solid var(--rule);font-weight:400}
+  button.small{font-size:13px;padding:11px 14px}
+
+  .tally{display:flex;gap:12px;margin-bottom:18px}
+  .stat{flex:1;background:var(--raise);border-radius:10px;padding:14px 14px 12px}
+  .stat .n{font-family:var(--serif);font-size:30px;line-height:1;color:var(--mark)}
+  .stat .l{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-top:7px}
+
+  #ridebox{display:none;margin-top:16px}
+  #ridebox.open{display:block}
+  #timer{font-family:var(--serif);font-size:44px;text-align:center;margin:6px 0 4px;letter-spacing:.02em}
+  #timerlabel{text-align:center;font-size:12px;color:var(--dim);margin-bottom:18px}
+  .instead{margin:16px 0 4px}
+
+  details{border-top:1px solid var(--rule);padding:14px 0}
+  details:first-of-type{border-top:0;padding-top:0}
+  details:last-of-type{padding-bottom:0}
+  summary{font-size:15px;font-weight:500;cursor:pointer;list-style:none;position:relative;padding-right:22px}
+  summary::-webkit-details-marker{display:none}
+  summary::after{content:"+";position:absolute;right:0;top:-2px;color:var(--mark);font-size:18px;font-weight:400}
+  details[open] summary::after{content:"\2013"}
+  details .body{margin-top:12px}
+  details .body p{font-size:15px;line-height:1.55;color:var(--dim);margin-bottom:10px}
+  details .body p:last-child{margin-bottom:0}
+  details .body .say{margin-bottom:10px}
+
+  textarea{width:100%;min-height:110px;resize:vertical;background:var(--raise);color:var(--paper);
+    border:1px solid var(--rule);border-radius:10px;padding:14px;font-family:var(--sans);
+    font-size:15px;line-height:1.5;margin-bottom:12px}
+  textarea::placeholder{color:#5d646d}
+  textarea:focus{outline:none;border-color:var(--mark)}
+
+  .checks{margin:4px 0 16px}
+  .chk{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--rule);
+       font-size:15px;cursor:pointer}
+  .chk:last-child{border-bottom:0}
+  .chk .box{width:22px;height:22px;flex:0 0 22px;border:1px solid var(--rule);border-radius:6px;
+            background:var(--raise);display:flex;align-items:center;justify-content:center;
+            font-size:13px;color:var(--ink)}
+  .chk.on .box{background:var(--mark);border-color:var(--mark)}
+  .chk.on .box::after{content:"\2713"}
+
+  .entry{border-top:1px solid var(--rule);padding:15px 0 3px}
+  .entry .when{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-bottom:7px}
+  .entry .what{font-size:15px;line-height:1.5;white-space:pre-wrap}
+  .entry .tags{font-size:12px;color:var(--mark);margin-top:8px}
+  .empty{font-size:14px;color:var(--dim);font-style:italic;font-family:var(--serif)}
+
+  footer{margin-top:28px;padding-top:20px;border-top:1px solid var(--rule);
+    font-family:var(--serif);font-size:15px;line-height:1.5;color:var(--dim)}
+  footer strong{color:var(--paper);font-weight:500}
+
+  .flash{font-size:13px;color:var(--mark);margin-top:10px;opacity:0;transition:opacity .2s}
+  .flash.show{opacity:1}
+  .row{display:flex;gap:10px;margin-top:12px}
+</style>
+</head>
+<body>
+
+  <div class="eyebrow">Open it whenever</div>
+  <h1>The list</h1>
+  <p class="sub">Whether I feel like it or not. The feeling isn't the instruction.</p>
+
+  <section id="urge">
+    <h2>It's happening right now</h2>
+
+    <div class="tally">
+      <div class="stat"><div class="n" id="nWeek">0</div><div class="l">This week</div></div>
+      <div class="stat"><div class="n" id="nTotal">0</div><div class="l">All time</div></div>
+    </div>
+
+    <p class="note" style="margin-bottom:16px">Every time you feel it and do nothing, that's a rep. Reps are what rewires this. Not insight, not promises. Reps.</p>
+
+    <button id="btnRide">Ride it out</button>
+
+    <div id="ridebox">
+      <div id="timer">10:00</div>
+      <div id="timerlabel">Sit with it. Don't fix it. It always passes.</div>
+
+      <p class="note">Not sure what to do with yourself:</p>
+      <ul class="instead">
+        <li>Feet flat on the floor. Breathe out longer than you breathe in. Ten of those.</li>
+        <li>Find where the knot actually is. How big. Does it move. Just watch it.</li>
+        <li>Do something with your hands. Washing up, the kittens, walk round the block.</li>
+        <li>If she's there, say the sentence. Then leave it.</li>
+        <li>Write down what your brain says will happen. Read it back in an hour.</li>
+      </ul>
+
+      <button id="btnLogged" style="margin-top:18px">I felt it and didn't act on it</button>
+      <button class="ghost" id="btnCancel" style="margin-top:10px">Close</button>
+      <div class="flash" id="flashUrge">Logged. That's a rep.</div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Stop &mdash; no exceptions</h2>
+    <ul>
+      <li>No questions about her past. Not exes, not numbers, not "just curious."</li>
+      <li>No checking. Phone, socials, her friends' posts, an ex's profile. Not even quickly.</li>
+      <li>No comments on how women look or behave. Telly, street, online. It doesn't leave my mouth.</li>
+      <li>No sulking. Say the true thing or say I need a bit. Never silence.</li>
+      <li>No fishing. No testing her, no leading questions I don't want answered.</li>
+      <li>No progress reports. She isn't my audience.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>What to say</h2>
+    <p class="note" style="margin-bottom:16px">Short is better. Long is you asking her to make you feel better.</p>
+
+    <details>
+      <summary>When you've gone cold</summary>
+      <div class="body">
+        <div class="say">"I've gone a bit off in my head. It's nothing you've done. Give me half an hour."</div>
+        <p>Within two minutes of noticing. Then actually come back in half an hour and be normal. Six seconds of honesty instead of an evening of her guessing.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>When she mentions an ex, a bloke, a crush</summary>
+      <div class="body">
+        <p>Nothing. Normal face, carry on talking. That's the whole move.</p>
+        <p>You'll want to go quiet, or make a joke with an edge on it, or ask one follow-up question. All three are the compulsion. She clocks all three.</p>
+        <p>If it's really loud, excuse yourself for five minutes rather than sit there radiating it.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>When you've already snapped or sulked</summary>
+      <div class="body">
+        <div class="say">"That was me, not you. Sorry. I'm working on it."</div>
+        <p>That's the whole apology. No explanation of what set you off, because the explanation is always secretly a request that she change something.</p>
+        <p>And once. Repairing three times in an evening is its own kind of pressure.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>When you want reassurance</summary>
+      <div class="body">
+        <p>That's the one to sit on. Reassurance works for about a day and teaches your brain the feeling is an emergency someone else resolves.</p>
+        <p>If you need it said out loud, say it to a mate, not to her.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>When she asks how the work is going</summary>
+      <div class="body">
+        <p>Short and undramatic. "Yeah, doing it. Some days are easier than others."</p>
+        <p>Don't hand her a list of what you've resisted. That makes her the examiner and puts her back in charge of your feelings.</p>
+      </div>
+    </details>
+  </section>
+
+  <section>
+    <h2>Read when it's bad</h2>
+
+    <details>
+      <summary>The feeling is not information</summary>
+      <div class="body">
+        <p>The knot is a threat response, same machinery as a car swerving at you. It fires at a hypothetical. It feels like evidence. It isn't. Nothing has happened.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>There's no fact that ends this</summary>
+      <div class="body">
+        <p>No answer she gives closes it, because what you actually want is to have been her only person ever, and that isn't available. Chasing it just trains the chase.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>It isn't love, it's fear</summary>
+      <div class="body">
+        <p>Love wants her to have a big life. Fear wants her to have a small one. When you're upset she found someone attractive, nothing generous is happening. That's a man scanning for threats.</p>
+        <p>The answer isn't less love. It's less fear.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>The gripping is what loses people</summary>
+      <div class="body">
+        <p>Not one big incident. The accumulated weight of being someone's security blanket, having to think about how every small thing will land.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Coldness reads as punishment</summary>
+      <div class="body">
+        <p>From inside it's armour. From where she's standing it looks like she's done something and you're withholding. She'll spend the evening working out what she did wrong on a day she did nothing.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>You're not going to feel fixed</summary>
+      <div class="body">
+        <p>There's no unlock. One day you'll notice you didn't ask the question, and it won't have been hard. That's what better looks like. Undramatic. You'll almost miss it.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Doing it only for her is the version that fails</summary>
+      <div class="body">
+        <p>If the only fuel is fear of losing her, you stop the day she seems safe again. This has to be who you want to be either way, or it doesn't hold.</p>
+      </div>
+    </details>
+  </section>
+
+  <section>
+    <h2>Every week</h2>
+    <ul>
+      <li>One thing that isn't her. A mate, the gym, football. A man with his own life is harder to frighten.</li>
+      <li>Twenty minutes reading. Same time each week, so it doesn't need motivation.</li>
+      <li>Tell one person something true about how you're actually doing.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Sunday check-in</h2>
+    <p class="prompt">Where did I slip this week? What actually happened?</p>
+    <p class="note" style="margin-bottom:14px">Be specific. "Wasn't great" isn't an answer. Name the moment.</p>
+
+    <div class="checks">
+      <div class="chk" data-k="slip"><div class="box"></div><div>I slipped at least once</div></div>
+      <div class="chk" data-k="said"><div class="box"></div><div>I said the sentence when I went cold</div></div>
+      <div class="chk" data-k="own"><div class="box"></div><div>I did one thing that wasn't her</div></div>
+      <div class="chk" data-k="read"><div class="box"></div><div>I read for twenty minutes</div></div>
+    </div>
+
+    <textarea id="checkin" placeholder="Tuesday &mdash; she mentioned a bloke from work and I went quiet the whole evening. Said nothing. She asked twice."></textarea>
+    <button id="btnSave">Save this week</button>
+    <div class="flash" id="flashSave">Saved.</div>
+
+    <div id="history" style="margin-top:22px"></div>
+
+    <div class="row">
+      <button class="ghost small" id="btnExport">Back up my entries</button>
+      <button class="ghost small" id="btnImport">Restore</button>
+    </div>
+    <p class="note" style="margin-top:10px">Everything here is saved on this phone only. Nothing is sent anywhere. Back it up now and then, because clearing Safari's data wipes it.</p>
+    <div class="flash" id="flashBackup">Copied. Paste it somewhere safe.</div>
+  </section>
+
+  <footer>
+    <strong>The rule about rules.</strong> If a new idea involves changing what she does or what she tells me, it isn't a measure. It's the jealousy negotiating. Bin it.
+  </footer>
+
+<script>
+(function(){
+  var K_URGE='tl_urges', K_LOG='tl_checkins';
+
+  function read(k){ try{ return JSON.parse(localStorage.getItem(k))||[]; }catch(e){ return []; } }
+  function write(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} }
+  function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function flash(id){
+    var f=document.getElementById(id); f.classList.add('show');
+    setTimeout(function(){ f.classList.remove('show'); },2500);
+  }
+
+  function renderTally(){
+    var all=read(K_URGE), cut=Date.now()-6048e5;
+    document.getElementById('nTotal').textContent=all.length;
+    document.getElementById('nWeek').textContent=all.filter(function(t){return t>cut;}).length;
+  }
+
+  var box=document.getElementById('ridebox'),
+      timerEl=document.getElementById('timer'),
+      labelEl=document.getElementById('timerlabel'),
+      tick=null, left=600;
+
+  function fmt(s){ var m=Math.floor(s/60),r=s%60; return m+':'+(r<10?'0':'')+r; }
+
+  document.getElementById('btnRide').addEventListener('click',function(){
+    box.classList.add('open');
+    labelEl.textContent="Sit with it. Don't fix it. It always passes.";
+    left=600; timerEl.textContent=fmt(left);
+    clearInterval(tick);
+    tick=setInterval(function(){
+      left--;
+      if(left<=0){ left=0; clearInterval(tick); labelEl.textContent='Still here. It passed, like it always does.'; }
+      timerEl.textContent=fmt(left);
+    },1000);
+    box.scrollIntoView({behavior:'smooth',block:'center'});
+  });
+
+  document.getElementById('btnCancel').addEventListener('click',function(){
+    box.classList.remove('open'); clearInterval(tick);
+  });
+
+  document.getElementById('btnLogged').addEventListener('click',function(){
+    var a=read(K_URGE); a.push(Date.now()); write(K_URGE,a);
+    renderTally(); flash('flashUrge');
+  });
+
+  document.querySelectorAll('.chk').forEach(function(el){
+    el.addEventListener('click',function(){ el.classList.toggle('on'); });
+  });
+
+  function fmtDate(ts){
+    return new Date(ts).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+  }
+
+  var LABELS={slip:'Slipped',said:'Said the sentence',own:'Own thing',read:'Read'};
+
+  function renderHistory(){
+    var log=read(K_LOG), el=document.getElementById('history');
+    if(!log.length){
+      el.innerHTML='<p class="empty">No check-ins yet. The first one is the hardest to be honest in.</p>';
+      return;
+    }
+    el.innerHTML=log.slice().reverse().map(function(e){
+      var tags=(e.flags||[]).map(function(f){return LABELS[f]||f;}).join('  \u00b7  ');
+      return '<div class="entry"><div class="when">'+fmtDate(e.at)+'</div>'+
+             '<div class="what">'+esc(e.text)+'</div>'+
+             (tags?'<div class="tags">'+esc(tags)+'</div>':'')+'</div>';
+    }).join('');
+  }
+
+  document.getElementById('btnSave').addEventListener('click',function(){
+    var ta=document.getElementById('checkin'), txt=ta.value.trim();
+    if(!txt) return;
+    var flags=[];
+    document.querySelectorAll('.chk.on').forEach(function(el){ flags.push(el.getAttribute('data-k')); });
+    var log=read(K_LOG);
+    log.push({at:Date.now(),text:txt,flags:flags});
+    write(K_LOG,log);
+    ta.value=''; ta.blur();
+    document.querySelectorAll('.chk').forEach(function(el){ el.classList.remove('on'); });
+    renderHistory(); flash('flashSave');
+  });
+
+  document.getElementById('btnExport').addEventListener('click',function(){
+    var data=JSON.stringify({urges:read(K_URGE),checkins:read(K_LOG)});
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(data).then(
+        function(){ flash('flashBackup'); },
+        function(){ window.prompt('Copy this and keep it safe:',data); }
+      );
+    } else {
+      window.prompt('Copy this and keep it safe:',data);
+    }
+  });
+
+  document.getElementById('btnImport').addEventListener('click',function(){
+    var raw=window.prompt('Paste your backup here:');
+    if(!raw) return;
+    try{
+      var d=JSON.parse(raw);
+      if(d.urges) write(K_URGE,d.urges);
+      if(d.checkins) write(K_LOG,d.checkins);
+      renderTally(); renderHistory();
+    }catch(e){ alert("That didn't look like a backup."); }
+  });
+
+  renderTally();
+  renderHistory();
+})();
+</script>
+</body>
+</html>
