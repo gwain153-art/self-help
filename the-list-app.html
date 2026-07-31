@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="The list">
+<meta name="theme-color" content="#14171c">
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="icon" href="icon.png">
+<link rel="manifest" href="manifest.json">
+<title>The list</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#14171c;
+    --card:#1b1f26;
+    --raise:#232830;
+    --paper:#eceae5;
+    --dim:#8b9199;
+    --rule:#2b313a;
+    --mark:#c2a35c;
+    --serif:'Newsreader',Georgia,serif;
+    --sans:'Inter',-apple-system,system-ui,sans-serif;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+
+  html{background:var(--ink)}
+
+  body{
+    background:var(--ink);
+    color:var(--paper);
+    font-family:var(--sans);
+    -webkit-font-smoothing:antialiased;
+    padding:calc(env(safe-area-inset-top) + 26px) 18px calc(env(safe-area-inset-bottom) + 56px);
+    max-width:520px;
+    margin:0 auto;
+  }
+
+  .eyebrow{
+    font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--dim);margin-bottom:12px;
+  }
+
+  h1{
+    font-family:var(--serif);font-weight:400;font-size:34px;
+    line-height:1.1;letter-spacing:-.01em;margin-bottom:8px;
+  }
+
+  .sub{
+    font-family:var(--serif);font-style:italic;font-size:16px;
+    line-height:1.45;color:var(--dim);
+  }
+
+  section{
+    margin-top:30px;
+    background:var(--card);
+    border:1px solid var(--rule);
+    border-radius:14px;
+    padding:22px 20px;
+  }
+
+  h2{
+    font-size:10px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--mark);padding-bottom:9px;border-bottom:1px solid var(--rule);
+    margin-bottom:16px;
+  }
+
+  ul{list-style:none}
+
+  li{
+    font-size:15px;line-height:1.45;padding-left:18px;
+    position:relative;margin-bottom:11px;
+  }
+  li:last-child{margin-bottom:0}
+  li::before{
+    content:"";position:absolute;left:0;top:9px;
+    width:6px;height:1px;background:var(--mark);
+  }
+
+  .say{
+    font-family:var(--serif);font-size:17px;line-height:1.5;
+    padding:15px 16px;background:var(--raise);
+    border-left:2px solid var(--mark);border-radius:0 6px 6px 0;
+  }
+
+  p.note{font-size:14px;line-height:1.55;color:var(--dim)}
+  p.note + p.note{margin-top:10px}
+
+  /* the urge panel */
+  #urge{border-color:#3a3324}
+
+  button{
+    font-family:var(--sans);font-size:15px;font-weight:500;
+    color:var(--ink);background:var(--mark);
+    border:0;border-radius:10px;padding:15px 18px;
+    width:100%;cursor:pointer;
+  }
+  button:active{opacity:.75}
+
+  button.ghost{
+    background:transparent;color:var(--dim);
+    border:1px solid var(--rule);font-weight:400;
+  }
+
+  .tally{
+    display:flex;gap:12px;margin-bottom:18px;
+  }
+  .stat{
+    flex:1;background:var(--raise);border-radius:10px;
+    padding:14px 14px 12px;
+  }
+  .stat .n{
+    font-family:var(--serif);font-size:30px;line-height:1;
+    color:var(--mark);
+  }
+  .stat .l{
+    font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--dim);margin-top:7px;
+  }
+
+  #ridebox{display:none;margin-top:16px}
+  #ridebox.open{display:block}
+
+  #timer{
+    font-family:var(--serif);font-size:44px;text-align:center;
+    color:var(--paper);margin:6px 0 4px;letter-spacing:.02em;
+  }
+  #timerlabel{
+    text-align:center;font-size:12px;color:var(--dim);
+    margin-bottom:18px;
+  }
+
+  textarea{
+    width:100%;min-height:120px;resize:vertical;
+    background:var(--raise);color:var(--paper);
+    border:1px solid var(--rule);border-radius:10px;
+    padding:14px;font-family:var(--sans);font-size:15px;line-height:1.5;
+    margin-bottom:12px;
+  }
+  textarea::placeholder{color:#5d646d}
+  textarea:focus{outline:none;border-color:var(--mark)}
+
+  .prompt{
+    font-family:var(--serif);font-size:17px;line-height:1.45;
+    margin-bottom:14px;
+  }
+
+  .entry{
+    border-top:1px solid var(--rule);
+    padding:15px 0 3px;
+  }
+  .entry .when{
+    font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--dim);margin-bottom:7px;
+  }
+  .entry .what{
+    font-size:15px;line-height:1.5;white-space:pre-wrap;
+  }
+
+  .empty{font-size:14px;color:var(--dim);font-style:italic;font-family:var(--serif)}
+
+  footer{
+    margin-top:30px;padding-top:20px;border-top:1px solid var(--rule);
+    font-family:var(--serif);font-size:15px;line-height:1.5;color:var(--dim);
+  }
+  footer strong{color:var(--paper);font-weight:500}
+
+  .flash{
+    font-size:13px;color:var(--mark);margin-top:10px;
+    opacity:0;transition:opacity .2s;
+  }
+  .flash.show{opacity:1}
+</style>
+</head>
+<body>
+
+  <div class="eyebrow">Open it whenever</div>
+  <h1>The list</h1>
+  <p class="sub">Whether I feel like it or not. The feeling isn't the instruction.</p>
+
+  <section id="urge">
+    <h2>It's happening right now</h2>
+
+    <div class="tally">
+      <div class="stat"><div class="n" id="nWeek">0</div><div class="l">This week</div></div>
+      <div class="stat"><div class="n" id="nTotal">0</div><div class="l">All time</div></div>
+    </div>
+
+    <p class="note" style="margin-bottom:16px">Every time you feel it and do nothing, that's a rep. It's the only thing that actually rewires this.</p>
+
+    <button id="btnRide">Ride it out</button>
+
+    <div id="ridebox">
+      <div id="timer">10:00</div>
+      <div id="timerlabel">Sit with it. Don't fix it. It always passes.</div>
+      <button id="btnLogged">I felt it and didn't act on it</button>
+      <button class="ghost" id="btnCancel" style="margin-top:10px">Close</button>
+      <div class="flash" id="flashUrge">Logged. That's a rep.</div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Stop — no exceptions</h2>
+    <ul>
+      <li>No questions about her past. Not exes, not numbers, not "just curious."</li>
+      <li>No checking. Phone, socials, her friends' posts, an ex's profile. Not even quickly.</li>
+      <li>No comments on how women look or behave. Telly, street, online. It doesn't leave my mouth.</li>
+      <li>No sulking. Say the true thing or say I need a bit. Never silence.</li>
+      <li>No fishing. No testing her, no leading questions I don't want answered.</li>
+      <li>No progress reports. She isn't my audience.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>When the coldness comes</h2>
+    <div class="say">"I've gone a bit off in my head. It's nothing you've done. Give me half an hour."</div>
+    <p class="note" style="margin-top:12px">Say it within two minutes. Come back in half an hour and be normal.</p>
+  </section>
+
+  <section>
+    <h2>Every week</h2>
+    <ul>
+      <li>One thing that isn't her. A mate, the gym, football.</li>
+      <li>Twenty minutes reading. Same time, so it doesn't need motivation.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Sunday check-in</h2>
+    <p class="prompt">Where did I slip this week? What actually happened?</p>
+    <p class="note" style="margin-bottom:14px">Be specific. "Wasn't great" isn't an answer. Name the moment.</p>
+    <textarea id="checkin" placeholder="Tuesday — she mentioned a bloke from work and I went quiet for the whole evening. Didn't say anything. She asked twice."></textarea>
+    <button id="btnSave">Save this week</button>
+    <div class="flash" id="flashSave">Saved.</div>
+    <div id="history" style="margin-top:22px"></div>
+  </section>
+
+  <footer>
+    <strong>The rule about rules.</strong> If a new idea involves changing what she does or what she tells me, it isn't a measure. It's the jealousy negotiating. Bin it.
+  </footer>
+
+<script>
+(function(){
+  var K_URGE = 'tl_urges';
+  var K_LOG  = 'tl_checkins';
+
+  function read(k){
+    try { return JSON.parse(localStorage.getItem(k)) || []; }
+    catch(e){ return []; }
+  }
+  function write(k,v){
+    try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){}
+  }
+
+  /* ---- urge tally ---- */
+  function renderTally(){
+    var all = read(K_URGE);
+    var cutoff = Date.now() - 7*24*60*60*1000;
+    var week = all.filter(function(t){ return t > cutoff; });
+    document.getElementById('nTotal').textContent = all.length;
+    document.getElementById('nWeek').textContent = week.length;
+  }
+
+  var box = document.getElementById('ridebox');
+  var timerEl = document.getElementById('timer');
+  var tick = null;
+  var left = 600;
+
+  function fmt(s){
+    var m = Math.floor(s/60), r = s%60;
+    return m + ':' + (r<10?'0':'') + r;
+  }
+
+  function startTimer(){
+    left = 600;
+    timerEl.textContent = fmt(left);
+    clearInterval(tick);
+    tick = setInterval(function(){
+      left--;
+      if(left <= 0){
+        left = 0;
+        clearInterval(tick);
+        document.getElementById('timerlabel').textContent = 'Still here. It passed, like it always does.';
+      }
+      timerEl.textContent = fmt(left);
+    }, 1000);
+  }
+
+  document.getElementById('btnRide').addEventListener('click', function(){
+    box.classList.add('open');
+    document.getElementById('timerlabel').textContent = "Sit with it. Don't fix it. It always passes.";
+    startTimer();
+    box.scrollIntoView({behavior:'smooth', block:'center'});
+  });
+
+  document.getElementById('btnCancel').addEventListener('click', function(){
+    box.classList.remove('open');
+    clearInterval(tick);
+  });
+
+  document.getElementById('btnLogged').addEventListener('click', function(){
+    var all = read(K_URGE);
+    all.push(Date.now());
+    write(K_URGE, all);
+    renderTally();
+    var f = document.getElementById('flashUrge');
+    f.classList.add('show');
+    setTimeout(function(){ f.classList.remove('show'); }, 2500);
+  });
+
+  /* ---- check-ins ---- */
+  function fmtDate(ts){
+    var d = new Date(ts);
+    return d.toLocaleDateString('en-GB', {day:'numeric', month:'short', year:'numeric'});
+  }
+
+  function renderHistory(){
+    var log = read(K_LOG);
+    var el = document.getElementById('history');
+    if(!log.length){
+      el.innerHTML = '<p class="empty">No check-ins yet. The first one is the hardest to be honest in.</p>';
+      return;
+    }
+    el.innerHTML = log.slice().reverse().map(function(e){
+      var safe = String(e.text)
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      return '<div class="entry"><div class="when">' + fmtDate(e.at) +
+             '</div><div class="what">' + safe + '</div></div>';
+    }).join('');
+  }
+
+  document.getElementById('btnSave').addEventListener('click', function(){
+    var ta = document.getElementById('checkin');
+    var txt = ta.value.trim();
+    if(!txt) return;
+    var log = read(K_LOG);
+    log.push({at: Date.now(), text: txt});
+    write(K_LOG, log);
+    ta.value = '';
+    ta.blur();
+    renderHistory();
+    var f = document.getElementById('flashSave');
+    f.classList.add('show');
+    setTimeout(function(){ f.classList.remove('show'); }, 2500);
+  });
+
+  renderTally();
+  renderHistory();
+})();
+</script>
+</body>
+</html>
