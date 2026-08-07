@@ -45,6 +45,16 @@
   p.note{font-size:14px;line-height:1.55;color:var(--dim)}
   .prompt{font-family:var(--serif);font-size:17px;line-height:1.45;margin-bottom:6px}
 
+  /* the sentence, pinned */
+  #sentence{border-color:#3a3324;background:#1e2129}
+  .bigsay{
+    font-family:var(--serif);font-size:22px;line-height:1.4;
+    padding:20px 18px;background:var(--raise);
+    border-left:3px solid var(--mark);border-radius:0 8px 8px 0;
+  }
+  .usewhen{margin-top:16px}
+  .usewhen li{font-size:14px;color:var(--dim)}
+
   button{font-family:var(--sans);font-size:15px;font-weight:500;color:var(--ink);background:var(--mark);
          border:0;border-radius:10px;padding:15px 18px;width:100%;cursor:pointer}
   button:active{opacity:.75}
@@ -80,6 +90,11 @@
   textarea::placeholder{color:#5d646d}
   textarea:focus{outline:none;border-color:var(--mark)}
 
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+  .chip{font-size:13px;color:var(--dim);background:var(--raise);border:1px solid var(--rule);
+        border-radius:20px;padding:8px 13px;cursor:pointer}
+  .chip.on{background:var(--mark);border-color:var(--mark);color:var(--ink)}
+
   .checks{margin:4px 0 16px}
   .chk{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--rule);
        font-size:15px;cursor:pointer}
@@ -111,6 +126,19 @@
   <h1>The list</h1>
   <p class="sub">Whether I feel like it or not. The feeling isn't the instruction.</p>
 
+  <!-- ============ THE SENTENCE ============ -->
+  <section id="sentence">
+    <h2>The sentence</h2>
+    <div class="bigsay">"I've gone a bit off in my head. It's nothing you've done. Give me half an hour."</div>
+    <ul class="usewhen">
+      <li>Say it within two minutes of noticing you've gone cold.</li>
+      <li>Then actually come back in half an hour, and be normal.</li>
+      <li>Don't explain what set it off. The explanation is always a request that she change something.</li>
+      <li>Six seconds of honesty instead of an evening of her guessing.</li>
+    </ul>
+  </section>
+
+  <!-- ============ RIGHT NOW ============ -->
   <section id="urge">
     <h2>It's happening right now</h2>
 
@@ -142,6 +170,7 @@
     </div>
   </section>
 
+  <!-- ============ STOP LIST ============ -->
   <section>
     <h2>Stop &mdash; no exceptions</h2>
     <ul>
@@ -154,17 +183,30 @@
     </ul>
   </section>
 
+  <!-- ============ JOURNAL ============ -->
+  <section>
+    <h2>Journal</h2>
+    <p class="note" style="margin-bottom:14px">What happened, and what you did. Not a transcript of the feeling &mdash; going round and round in writing is the same loop with a pen in it.</p>
+
+    <div class="chips" id="jChips">
+      <div class="chip" data-k="urge">Urge</div>
+      <div class="chip" data-k="cold">Went cold</div>
+      <div class="chip" data-k="slip">Slipped</div>
+      <div class="chip" data-k="held">Held it</div>
+      <div class="chip" data-k="good">Good day</div>
+    </div>
+
+    <textarea id="jText" placeholder="What actually happened. What I did about it. What it cost, or didn't."></textarea>
+    <button id="jSave">Save entry</button>
+    <div class="flash" id="flashJ">Saved.</div>
+
+    <div id="jHistory" style="margin-top:22px"></div>
+  </section>
+
+  <!-- ============ SCRIPTS ============ -->
   <section>
     <h2>What to say</h2>
     <p class="note" style="margin-bottom:16px">Short is better. Long is you asking her to make you feel better.</p>
-
-    <details>
-      <summary>When you've gone cold</summary>
-      <div class="body">
-        <div class="say">"I've gone a bit off in my head. It's nothing you've done. Give me half an hour."</div>
-        <p>Within two minutes of noticing. Then actually come back in half an hour and be normal. Six seconds of honesty instead of an evening of her guessing.</p>
-      </div>
-    </details>
 
     <details>
       <summary>When she mentions an ex, a bloke, a crush</summary>
@@ -179,7 +221,7 @@
       <summary>When you've already snapped or sulked</summary>
       <div class="body">
         <div class="say">"That was me, not you. Sorry. I'm working on it."</div>
-        <p>That's the whole apology. No explanation of what set you off, because the explanation is always secretly a request that she change something.</p>
+        <p>That's the whole apology. No explanation of what set you off.</p>
         <p>And once. Repairing three times in an evening is its own kind of pressure.</p>
       </div>
     </details>
@@ -201,6 +243,7 @@
     </details>
   </section>
 
+  <!-- ============ READ WHEN BAD ============ -->
   <section>
     <h2>Read when it's bad</h2>
 
@@ -255,6 +298,7 @@
     </details>
   </section>
 
+  <!-- ============ WEEKLY ============ -->
   <section>
     <h2>Every week</h2>
     <ul>
@@ -264,6 +308,7 @@
     </ul>
   </section>
 
+  <!-- ============ CHECK-IN ============ -->
   <section>
     <h2>Sunday check-in</h2>
     <p class="prompt">Where did I slip this week? What actually happened?</p>
@@ -283,7 +328,7 @@
     <div id="history" style="margin-top:22px"></div>
 
     <div class="row">
-      <button class="ghost small" id="btnExport">Back up my entries</button>
+      <button class="ghost small" id="btnExport">Back up everything</button>
       <button class="ghost small" id="btnImport">Restore</button>
     </div>
     <p class="note" style="margin-top:10px">Everything here is saved on this phone only. Nothing is sent anywhere. Back it up now and then, because clearing Safari's data wipes it.</p>
@@ -296,7 +341,7 @@
 
 <script>
 (function(){
-  var K_URGE='tl_urges', K_LOG='tl_checkins';
+  var K_URGE='tl_urges', K_LOG='tl_checkins', K_J='tl_journal';
 
   function read(k){ try{ return JSON.parse(localStorage.getItem(k))||[]; }catch(e){ return []; } }
   function write(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} }
@@ -305,7 +350,11 @@
     var f=document.getElementById(id); f.classList.add('show');
     setTimeout(function(){ f.classList.remove('show'); },2500);
   }
+  function fmtDate(ts){
+    return new Date(ts).toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
+  }
 
+  /* ---------- reps ---------- */
   function renderTally(){
     var all=read(K_URGE), cut=Date.now()-6048e5;
     document.getElementById('nTotal').textContent=all.length;
@@ -341,13 +390,44 @@
     renderTally(); flash('flashUrge');
   });
 
-  document.querySelectorAll('.chk').forEach(function(el){
+  /* ---------- journal ---------- */
+  var J_LABELS={urge:'Urge',cold:'Went cold',slip:'Slipped',held:'Held it',good:'Good day'};
+
+  document.querySelectorAll('#jChips .chip').forEach(function(el){
     el.addEventListener('click',function(){ el.classList.toggle('on'); });
   });
 
-  function fmtDate(ts){
-    return new Date(ts).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+  function renderJournal(){
+    var log=read(K_J), el=document.getElementById('jHistory');
+    if(!log.length){
+      el.innerHTML='<p class="empty">Nothing yet.</p>';
+      return;
+    }
+    el.innerHTML=log.slice().reverse().map(function(e){
+      var tags=(e.tags||[]).map(function(t){return J_LABELS[t]||t;}).join('  \u00b7  ');
+      return '<div class="entry"><div class="when">'+fmtDate(e.at)+'</div>'+
+             '<div class="what">'+esc(e.text)+'</div>'+
+             (tags?'<div class="tags">'+esc(tags)+'</div>':'')+'</div>';
+    }).join('');
   }
+
+  document.getElementById('jSave').addEventListener('click',function(){
+    var ta=document.getElementById('jText'), txt=ta.value.trim();
+    if(!txt) return;
+    var tags=[];
+    document.querySelectorAll('#jChips .chip.on').forEach(function(el){ tags.push(el.getAttribute('data-k')); });
+    var log=read(K_J);
+    log.push({at:Date.now(),text:txt,tags:tags});
+    write(K_J,log);
+    ta.value=''; ta.blur();
+    document.querySelectorAll('#jChips .chip').forEach(function(el){ el.classList.remove('on'); });
+    renderJournal(); flash('flashJ');
+  });
+
+  /* ---------- check-ins ---------- */
+  document.querySelectorAll('.chk').forEach(function(el){
+    el.addEventListener('click',function(){ el.classList.toggle('on'); });
+  });
 
   var LABELS={slip:'Slipped',said:'Said the sentence',own:'Own thing',read:'Read'};
 
@@ -378,8 +458,9 @@
     renderHistory(); flash('flashSave');
   });
 
+  /* ---------- backup ---------- */
   document.getElementById('btnExport').addEventListener('click',function(){
-    var data=JSON.stringify({urges:read(K_URGE),checkins:read(K_LOG)});
+    var data=JSON.stringify({urges:read(K_URGE),checkins:read(K_LOG),journal:read(K_J)});
     if(navigator.clipboard&&navigator.clipboard.writeText){
       navigator.clipboard.writeText(data).then(
         function(){ flash('flashBackup'); },
@@ -397,12 +478,14 @@
       var d=JSON.parse(raw);
       if(d.urges) write(K_URGE,d.urges);
       if(d.checkins) write(K_LOG,d.checkins);
-      renderTally(); renderHistory();
+      if(d.journal) write(K_J,d.journal);
+      renderTally(); renderHistory(); renderJournal();
     }catch(e){ alert("That didn't look like a backup."); }
   });
 
   renderTally();
   renderHistory();
+  renderJournal();
 })();
 </script>
 </body>
